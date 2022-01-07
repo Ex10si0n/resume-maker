@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resume</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+    <script src="https://unpkg.com/vue@3.2"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        .column {
+            float: left;
+            padding: 10px;
+        }
+
+        .left {
+            width: 40%;
+        }
+
+        .right {
+            width: 60%;
+        }
+
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div class="row">
+        <div class="column left">
+            <h1>{{ this.resume.Basic.first_name }} {{ this.resume.Basic.last_name }}</h1>
+            <p v-if="this.resume.Basic.position"><strong>Position:</strong> {{this.resume.Basic.position}}</p>
+            <p v-if="this.resume.Basic.email"><strong>Email:</strong> {{ this.resume.Basic.email}}</p>
+            <p v-if="this.resume.Basic.phone"><strong>Phone:</strong> {{ this.resume.Basic.phone}}</p>
+            <p v-if="this.resume.Basic.url"><strong>URL:</strong> <a
+                    :href="this.resume.Basic.url">{{ this.resume.Basic.url }}</a></p>
+            <p v-if="this.resume.Basic.summary"><strong>Summary:</strong> {{ this.resume.Basic.summary}}</p>
+            <!--	<p v-for="(value, key) in this.resume.Work" v-if=""><strong>{{ key.replace('_', ' ').toUpperCase() }}: </strong>{{ value }}</p>-->
+            <h2>Skills</h2>
+            <div v-for="skill, key in this.resume.Skills">
+            <p><strong>{{ key }}:</strong> {{ skill }}</p>
+            </div>
+
+            <h2>Languages</h2>
+            <p><strong>Speaking:</strong> {{ this.resume.Language.speaking }}</p>
+            <p><strong>Reading:</strong> {{ this.resume.Language.reading }}</p>
+            <h2>Awards</h2>
+            <div v-for="award in this.resume.Awards">
+                <strong>{{ award.title }}</strong> - {{ award.awarder }} - {{ award.date }}
+                <p v-if="award.summary">Summary: {{ award.summary }}</p>
+                <hr>
+            </div>
+
+            <h2 v-if="this.resume.Publication[0].name">Publication</h2>
+            <div v-if="this.resume.Publication[0].name" v-for="pub in this.resume.Publication">
+                <p><strong><em>{{ pub.name }}</em></strong> - {{ pub.publisher }} - {{ pub.releaseDate }}</p>
+                URL: <a :href="pub.url">{{ pub.url }}</a>
+                <p v-if="pub.summary">Summary: {{ pub.summary }}</p>
+            </div>
+        </div>
+        <div class="column right">
+            <h2 v-if="this.resume.Work[0].company_name">Work Experience</h2>
+            <div v-if="this.resume.Work[0].company_name" v-for="work in this.resume.Work">
+                <strong><a :href="work.url">{{ work.company_name }}</a></strong> - {{ work.position }} -
+                ({{ work.start_date }} - {{ work.end_date }})
+                <p><strong>Summary:</strong> {{ work.summary }}</p>
+            </div>
+            <h2>Education</h2>
+            <div v-for="edu in this.resume.Education">
+                <strong><a :href="edu.url">{{ edu.institute }} - {{ edu.area }}</a></strong> ({{ edu.start_date }} -
+                {{ edu.end_date }})
+                <p>{{ edu.degree }}</p>
+                <p>GPA: {{ edu.gpa }}/{{edu.full_gpa}}</p>
+                <p v-if="summary">Summary: {{ edu.summary }}</p>
+            </div>
+            <h2>Projects</h2>
+            <div v-for="proj in this.resume.Project">
+                <strong><a :href="proj.url">{{ proj.name }}</a></strong> ({{ proj.date }})
+                <strong>{{ proj.roles }}</strong>
+                <p>{{ proj.description }}</p>
+                <p><strong>Highlights:</strong> {{ proj.highlights }}</p>
+                <p><strong>Domain:</strong> {{ proj.domain }}</p>
+                <hr>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+<!--<script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>-->
+
+
+<script>
+    const options = {
+        data() {
+            return {
+                debug: "on",
+                settings: {},
+                settingsURL: "/settings.json",
+                resume: {},
+            }
+        },
+        created() {
+            fetch(this.settingsURL)
+                .then(resp => resp.json())
+                .then(json => {
+                    this.settings = json
+                    fetch(json.resume)
+                        .then(resp => resp.json())
+                        .then(json => {
+                            this.resume = json
+                        })
+                })
+        },
+    };
+
+    const vm = Vue.createApp(options).mount('#app');
+
+</script>
+</body>
+
+</html>

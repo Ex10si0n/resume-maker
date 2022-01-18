@@ -79,7 +79,7 @@
                 {{ edu.end_date }})
                 <p>{{ edu.degree }}</p>
                 <p>GPA: {{ edu.gpa }}/{{edu.full_gpa}}</p>
-                <p v-if="summary">Summary: {{ edu.summary }}</p>
+                <p>Summary: {{ edu.summary }}</p>
             </div>
             <h2>Projects</h2>
             <div v-for="proj in this.resume.Project">
